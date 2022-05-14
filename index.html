@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guess the Country!</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="text/javascript" src="script.js"></script>
+    <script src="confetti.js"></script>
+    <script src="graph.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Spartan:wght@700&display=swap" rel="stylesheet">
+  
+</head>
+<body>
+
+    <div id="map"></div>
+
+    <div id="content">
+
+        <!-- page title -->
+        <div id="headingDiv">
+          <h2>Globle <br> (Emily's Version)</h2>
+        </div>
+    
+        <!-- input box -->
+        <input id="guess" type="text" autocomplete="off" placeholder="guess a country" oninput="checkInput()">
+    
+        <table id="guessTable">
+            <tr>
+                <th style="width:60%">Guess</th>
+                <th>Distance</th>
+            </tr>
+        </table>
+            
+      </div>
+    
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDh1tE_OYR23SY7QtgvR7LMHvvjFDjRHow&callback=initMap&v=weekly" async>
+</script>
+</body>
+</html>
