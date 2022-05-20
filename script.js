@@ -13,97 +13,125 @@ console.log(targetCountry);
 var count = 0;
 
 function initMap() {
-    map = new google.maps.Map(document.getElementById("map"), {
-      zoom: 2.3,
-      center: { lat: 30, lng: 0 },
-    });
-
-  }
-
-  function checkInput(){
-      var guess = document.getElementById("guess").value.toLowerCase();
-      for(var i=0; i<countryArray.length; i++){
-          if(guess == countryArray[i]){
-            document.getElementById("guess").value = null;
-            countryArray.splice(i, 1);
-            calculateDistance(guess);
-              
+  map = new google.maps.Map(document.getElementById("map"), {
+    zoom: 2.3,
+    center: { lat: 30, lng: 0 },
+  });
+  let uruguay = 33
+  let mexico = 2
+  let colombia = 23
+  console.log(bfs(uruguay, mexico))
+  console.log(bfs(colombia, mexico))
+  function bfs(from, to) {
+    var countryGraph = [[1], [0, 2], [1, 3, 4], [2, 4, 5, 6], [2, 3], [3, 6], [3, 5, 7], [6, 8], [7, 9], [8, 23], [11, 12], [10, 12, 14], [10, 11, 13, 14], [12], [11, 12], [17, 21, 18], [22], [15, 21, 19], [22, 15], [17, 21], [19, 24], [19, 17, 15], [16], [9, 26, 24, 27, 31], [20, 23, 27, 29], [28, 32, 34, 27, 33], [23, 31], [30, 29, 24, 23, 31, 32, 34, 25, 33], [31, 32, 25], [24, 27, 30], [29, 27], [23, 26, 27, 32, 28], [31, 27, 34, 25, 28], [25, 27], [25, 27, 32]]
+    let Q = [from]
+    let visited = new Set()
+    let edges = -1
+    while (Q.length != 0) {
+      // console.log(Q)
+      edges += 1
+      let l = Q.length
+      for (let i = 0; i < l; i++) {
+        let top = Q.shift();
+        if (top == to) {
+          return edges
+        }
+        for (let country of countryGraph[top]) {
+          country = parseInt(country)
+          if (!visited.has(country)) {
+            Q.push(country)
+            visited.add(country)
           }
+        }
       }
-  }
-
-  function calculateDistance(guess){
-    var correctLat = json[targetCountry].lat;
-    var correctLng = json[targetCountry].lng;
-    var guessedLat = json[guess].lat;
-    var guessedLng = json[guess].lng;
-
-    var distance = getDistance(guessedLat, guessedLng, correctLat, correctLng);
-
-    addRow(guess, distance);
-    addToMap(guess);
-
-    if(distance ==0){
-        winGame();
     }
   }
+}
 
-  function addRow(guess, distance){
-      var tr = document.createElement("tr");
-      var th1 = document.createElement("th");
-      th1.innerHTML = guess;
-      tr.appendChild(th1);
-      var th2 = document.createElement("th");
-      th2.innerHTML = distance+ " km";
-      tr.appendChild(th2);
-      document.getElementById("guessTable").appendChild(tr);
-  
-      count ++;
+function checkInput() {
+  var guess = document.getElementById("guess").value.toLowerCase();
+  for (var i = 0; i < countryArray.length; i++) {
+    if (guess == countryArray[i]) {
+      document.getElementById("guess").value = null;
+      countryArray.splice(i, 1);
+      calculateDistance(guess);
 
     }
-
-  function addToMap(guess){
-
-    //var color = pickColor(guess, targetCountry);
-
-    map.data.loadGeoJson('geojsons/'+guess+'.geojson');
-    map.data.setStyle({
-        fillColor: "#ff009d",
-        strokeColor: "#ff009d",
-        fillOpacity:  1
-      });
-    
   }
+}
 
-  function getDistance(lat1, lng1, lat2, lng2){
-    var R = 6371; // Radius of the earth in km
-    var dLat = (lat2-lat1) * (Math.PI/180);
-    var dLon = (lng2-lng1) * (Math.PI/180);
-    var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1* (Math.PI/180)) * Math.cos(lat2* (Math.PI/180)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-    var d = R * c;
-    return Math.round(d);
+function calculateDistance(guess) {
+  var correctLat = json[targetCountry].lat;
+  var correctLng = json[targetCountry].lng;
+  var guessedLat = json[guess].lat;
+  var guessedLng = json[guess].lng;
+
+  var distance = getDistance(guessedLat, guessedLng, correctLat, correctLng);
+
+  addRow(guess, distance);
+  addToMap(guess);
+
+  if (distance == 0) {
+    winGame();
   }
+}
 
-  function winGame(){
+function addRow(guess, distance) {
+  var tr = document.createElement("tr");
+  var th1 = document.createElement("th");
+  th1.innerHTML = guess;
+  tr.appendChild(th1);
+  var th2 = document.createElement("th");
+  th2.innerHTML = distance + " km";
+  tr.appendChild(th2);
+  document.getElementById("guessTable").appendChild(tr);
 
-    var element = document.getElementById("headingDiv");
-    element.parentNode.removeChild(guess);
+  count++;
 
-    const start = () => {
-        setTimeout(function() {
-            confetti.start()
-        }, 100);
-    };
-    const stop = () => {
-        setTimeout(function() {
-            confetti.stop()
-        }, 30000);
-    };
-    start();
-    stop();
+}
 
-    var thecount = document.createElement("h4");
-    thecount.innerHTML = "Total Guesses: "+count;
-    document.getElementById("content").appendChild(thecount);
+function addToMap(guess) {
+
+  //var color = pickColor(guess, targetCountry);
+
+  map.data.loadGeoJson('geojsons/' + guess + '.geojson');
+  map.data.setStyle({
+    fillColor: "#ff009d",
+    strokeColor: "#ff009d",
+    fillOpacity: 1
+  });
+
+}
+
+function getDistance(lat1, lng1, lat2, lng2) {
+  var R = 6371; // Radius of the earth in km
+  var dLat = (lat2 - lat1) * (Math.PI / 180);
+  var dLon = (lng2 - lng1) * (Math.PI / 180);
+  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  var d = R * c;
+  return Math.round(d);
+}
+
+function winGame() {
+
+  var element = document.getElementById("headingDiv");
+  element.parentNode.removeChild(guess);
+
+  const start = () => {
+    setTimeout(function () {
+      confetti.start()
+    }, 100);
+  };
+  const stop = () => {
+    setTimeout(function () {
+      confetti.stop()
+    }, 30000);
+  };
+  start();
+  stop();
+
+  var thecount = document.createElement("h4");
+  thecount.innerHTML = "Total Guesses: " + count;
+  document.getElementById("content").appendChild(thecount);
 }
